@@ -6,6 +6,11 @@ class Upload implements iPage
 {
     public static function display()
     {
+        ob_clean();
+        ob_start();
+
+        Components::bootstrap();
+        Components::navbar();
         ?>
             <span>Uploaded succesfully</span>
             <form action="index.php">

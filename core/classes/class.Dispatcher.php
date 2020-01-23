@@ -4,60 +4,60 @@
 
 class Dispatcher 
 {
-    private $pagesToBeLoaded = [
-        'Home',
-        'About',
-        'NotFound404',
-        'InternalServerError500',
-        'Upload',
-        'Download',
-    ];
+    private static $pathFile        = __DIR__ . '/../utils/class.Path.php'; 
+    private static $componentsFile  = __DIR__ . '/../utils/class.Components.php';
 
-    private $classesToBeLoaded = [
-        'UploadManager',
-    ];
-
-    private $interfacesToBeLoaded = [
-        'iPage',
-    ];
-
-    private $pagesPrefix = './pages/page.';
-    private $classPrefix = './core/classes/class.';
-    private $interfacePrefix = './core/interfaces/interface.';
-    private const EXTENSION = '.php';
-
-    private $actionClassMapping = [
-        'home' => 'Home',
-        'about' => 'About',
-        'download' => 'Download'
-    ];
-
+    // TODO: Security
     private $allowedActions = [
         'home',
         'about',
         'download',
     ];
 
-    public function __construct()
+    private function checkRequirements()
     {
-        // Load interfaces
-        foreach ( $this->interfacesToBeLoaded as $interface ) {
-            require_once($this->interfacePrefix . $interface . self::EXTENSION);
-        }
-        
-        // Load pages
-        foreach ( $this->pagesToBeLoaded as $page ) {
-            require_once($this->pagesPrefix . $page . self::EXTENSION);
+        if ( !file_exists(self::$pathFile) )
+        {
+            throw new Exception('Path file not found');
         }
 
-        // Load classes
-        foreach ( $this->classesToBeLoaded as $class ) {
-            require_once($this->classPrefix . $class . self::EXTENSION);
+        if ( !file_exists(self::$componentsFile) )
+        {
+            throw new Exception('Components file not found');
         }
+    }
+
+    private function loadComponents()
+    {
+        require_once( self::$pathFile );
+        require_once( self::$componentsFile );
+
+        // Loading interfaces
+        foreach ( Components::getInterfaces() as $interface ) {
+            require_once(Path::_INTERFACE_PREFIX . $interface . Path::_PHP_EXTENSION);
+        }
+        
+        // Loading pages
+        foreach ( Components::getPages() as $page ) {
+            require_once(Path::_PAGE_PREFIX . $page . Path::_PHP_EXTENSION);
+        }
+
+        // Loading classes
+        foreach ( Components::getClasses() as $class ) {
+            require_once(Path::_CLASS_PREFIX . $class . Path::_PHP_EXTENSION);
+        }
+    }
+
+    public function __construct()
+    {
+        $this->checkRequirements();
+
+        $this->loadComponents();
     }
 
     public function listen()
     {
+        // Security ?
         switch ( $_SERVER['REQUEST_METHOD'] )
         {
             case 'GET':
@@ -69,11 +69,13 @@ class Dispatcher
                 break;
 
             default:
-                echo 'Default branch: ' . $_SERVER['REQUEST_METHOD'];
+                // echo 'Default branch: ' . $_SERVER['REQUEST_METHOD'];
+                NotFound404::setUnknownAction( $_SERVER['REQUEST_METHOD'] );
+                NotFound404::display();
         }
     }
 
-    public function get()
+    private function get()
     {
         if ( !isset($_GET['action']) || !($_GET['action']) ) {
             Home::display();
@@ -81,7 +83,8 @@ class Dispatcher
             $action = $_GET['action'];
             if ( in_array($action, $this->allowedActions) )
             {
-                $pageClass = $this->actionClassMapping[$action];
+                $actionClassMapping = Components::getActionClassMapping();
+                $pageClass = $actionClassMapping[$action];
                 $pageClass::display();
             }
             else {
@@ -91,7 +94,7 @@ class Dispatcher
         }
     }
 
-    public function post()
+    private function post()
     {
         $action = $_POST['action'] ?? null;
         if ( !$action ) {
@@ -105,7 +108,7 @@ class Dispatcher
                 $uploadManager = new UploadManager();
                 $filename = $uploadManager->manageUpload();
                 if ( !$filename ) {
-                    InternalServerError500::display();
+                    InternalServerError500::display('Upload failed');
                 }
                 Upload::display();
         }
