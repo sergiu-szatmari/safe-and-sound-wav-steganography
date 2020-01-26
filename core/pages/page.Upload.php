@@ -4,7 +4,7 @@
 
 class Upload implements iPage
 {
-    public static function display()
+    public static function display( $downloadFilename = null )
     {
         ob_clean();
         ob_start();
@@ -15,7 +15,12 @@ class Upload implements iPage
             <span>Uploaded succesfully</span>
             <form action="index.php">
                 <input type="hidden" name="action" value="download" />
-                <input type="hidden" name="key" value="some-hash" />
+                <?php
+                if ( $downloadFilename ) {
+                    $inputElem = "<input type=\"hidden\" name=\"name\" value=\"$downloadFilename\" />";
+                    echo $inputElem;
+                }
+                ?>
                 <input type="submit" value="To download" />
             </form>
         <?php
