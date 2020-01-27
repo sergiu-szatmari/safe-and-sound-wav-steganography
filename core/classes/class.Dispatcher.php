@@ -6,6 +6,7 @@ class Dispatcher
 {
     private static $constFile       = __DIR__ . '/../utils/class.Constants.php'; 
     private static $componentsFile  = __DIR__ . '/../utils/class.Components.php';
+    private static $utilsFile       = __DIR__ . '/../utils/class.Utils.php';
 
     // TODO: Security
     private $allowedActions = [
@@ -31,6 +32,7 @@ class Dispatcher
     {
         require_once( self::$constFile );
         require_once( self::$componentsFile );
+        require_once( self::$utilsFile );
 
         // Loading interfaces
         foreach ( Components::getInterfaces() as $interface ) {
@@ -112,9 +114,17 @@ class Dispatcher
 
                 $message = $_POST['message'];
 
-                SteganographyManager::hide( $filename, $message );
+                $stegFilename = SteganographyManager::hide( $filename, $message );
 
-                Upload::display();
+                Upload::display( $stegFilename );
+                
+                break;
+
+            case 'download':
+
+                echo json_encode($_POST, JSON_PRETTY_PRINT);
+                die;
+                break;
         }
     }
 

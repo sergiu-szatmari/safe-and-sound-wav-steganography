@@ -43,13 +43,32 @@ class SteganographyManager
     {
         $stegFilename = Constants::_STEG_FILE_PREFIX . $filename;
         self::execute( "cd external/ && call script.hide.bat data.txt $filename $stegFilename 2" );
+
+        return $stegFilename;
+    }
+
+    private static function cleanUp( $filename )
+    {
+        $path = Constants::_DIR_EXTERNAL . $filename;
+        if ( !unlink($path) ) {
+            throw new Exception('Error in hide-cleanup process.');
+        }
+
+        $path = Constants::_DIR_EXTERNAL . 'data.txt';
+        if ( !unlink($path) ) {
+            throw new Exception('Error in hide-cleanup process.');
+        }
     }
 
     public static function hide( $filename, $message )
     {
         self::prepare( $filename, $message );
         
-        self::executeSteg( $filename );
+        $stegFilename = self::executeSteg( $filename );
+
+        self::cleanUp( $filename );
+
+        return $stegFilename;
     }
 
     public static function extract( $filename )
