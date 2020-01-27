@@ -14,7 +14,7 @@ class Components
     ];
     
     private static $classesArray = [
-        'UploadManager',
+        'FileManager',
         'SteganographyManager',
     ];
 

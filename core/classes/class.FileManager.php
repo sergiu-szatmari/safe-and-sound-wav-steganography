@@ -2,7 +2,7 @@
 
 defined('_SAFE_AND_SOUND_VALID_ACCESS') or die('Invalid access');
 
-class UploadManager
+class FileManager
 {
     private static function checkRequirements()
     {
@@ -56,5 +56,19 @@ class UploadManager
         $newFilename = self::upload();
 
         return $newFilename;
+    }
+
+    public static function onDownload( $stegFilename )
+    {
+        $stegFile = Constants::_DIR_EXTERNAL . $stegFilename;
+        
+        header('Content-Type: application/download');
+        header('Content-Disposition: attachment; filename="' . $stegFilename . '"');
+        header("Content-Length: " . filesize($stegFile));
+    
+        $fp = fopen( $stegFile, "r" );
+        fpassthru($fp);
+        fclose($fp);
+        die;
     }
 }

@@ -4,9 +4,12 @@ defined('_SAFE_AND_SOUND_VALID_ACCESS') or die('Invalid access');
 
 class Dispatcher 
 {
-    private static $constFile       = __DIR__ . '/../utils/class.Constants.php'; 
-    private static $componentsFile  = __DIR__ . '/../utils/class.Components.php';
-    private static $utilsFile       = __DIR__ . '/../utils/class.Utils.php';
+    private static $requiredClassesDir = __DIR__ . '/../utils/';
+    private static $requiredClasses = [
+        'Constants',
+        'Components',
+        'Utils'
+    ];
 
     // TODO: Security
     private $allowedActions = [
@@ -17,36 +20,32 @@ class Dispatcher
 
     private function checkRequirements()
     {
-        if ( !file_exists(self::$constFile) )
-        {
-            throw new Exception('Constants file not found');
-        }
-
-        if ( !file_exists(self::$componentsFile) )
-        {
-            throw new Exception('Components file not found');
+        foreach ( self::$requiredClasses as $className ) {
+            if ( !file_exists( self::$requiredClassesDir . 'class.' . $className . '.php') ) {
+                throw new Exception("$className not found.");
+            }
         }
     }
 
     private function loadComponents()
     {
-        require_once( self::$constFile );
-        require_once( self::$componentsFile );
-        require_once( self::$utilsFile );
+        foreach ( self::$requiredClasses as $className ) {
+            require_once( self::$requiredClassesDir . 'class.' . $className . '.php' );
+        }
 
         // Loading interfaces
         foreach ( Components::getInterfaces() as $interface ) {
-            require_once(Constants::_INTERFACE_PREFIX . $interface . Constants::_PHP_EXTENSION);
+            require_once( Constants::_INTERFACE_PREFIX . $interface . Constants::_PHP_EXTENSION );
         }
         
         // Loading pages
         foreach ( Components::getPages() as $page ) {
-            require_once(Constants::_PAGE_PREFIX . $page . Constants::_PHP_EXTENSION);
+            require_once( Constants::_PAGE_PREFIX . $page . Constants::_PHP_EXTENSION );
         }
 
         // Loading classes
         foreach ( Components::getClasses() as $class ) {
-            require_once(Constants::_CLASS_PREFIX . $class . Constants::_PHP_EXTENSION);
+            require_once( Constants::_CLASS_PREFIX . $class . Constants::_PHP_EXTENSION );
         }
     }
 
@@ -78,20 +77,20 @@ class Dispatcher
 
     private function get()
     {
-        if ( !isset($_GET['action']) || !($_GET['action']) ) {
+        $action = $_GET['action'] ?? null;
+        if ( !$action ) {
             Home::display();
-        } else {
-            $action = $_GET['action'];
-            if ( in_array($action, $this->allowedActions) )
-            {
-                $actionClassMapping = Components::getActionClassMapping();
-                $pageClass = $actionClassMapping[$action];
-                $pageClass::display();
-            }
-            else {
-                NotFound404::setUnknownAction( $action );
-                NotFound404::display();
-            }
+        }
+
+        if ( in_array($action, $this->allowedActions) )
+        {
+            $actionClassMapping = Components::getActionClassMapping();
+            $pageClass = $actionClassMapping[$action];
+            $pageClass::display();
+        }
+        else {
+            NotFound404::setUnknownAction( $action );
+            NotFound404::display();
         }
     }
 
@@ -107,14 +106,13 @@ class Dispatcher
         {
             case 'upload':
 
-                $filename = UploadManager::onUpload();
+                $filename = FileManager::onUpload();
                 if ( !$filename ) {
                     InternalServerError500::display('Upload failed');
                 }
 
-                $message = $_POST['message'];
-
-                $stegFilename = SteganographyManager::hide( $filename, $message );
+                $message        = $_POST['message'];
+                $stegFilename   = SteganographyManager::hide( $filename, $message );
 
                 Upload::display( $stegFilename );
                 
@@ -122,9 +120,18 @@ class Dispatcher
 
             case 'download':
 
-                echo json_encode($_POST, JSON_PRETTY_PRINT);
-                die;
+                if ( !$_POST['stegFilename'] ) {
+                    InternalServerError500::display('Invalid request body.');
+                }
+
+                $stegFilename = $_POST['stegFilename'];
+                FileManager::onDownload( $stegFilename );
+                
                 break;
+
+            default:
+                NotFound404::setUnknownAction( $action );
+                NotFound404::display();
         }
     }
 
