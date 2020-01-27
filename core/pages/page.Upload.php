@@ -1,6 +1,6 @@
 <?php
 
-!defined('_SAFE_AND_SOUND_VALID_ACCESS') && die('Invalid access');
+defined('_SAFE_AND_SOUND_VALID_ACCESS') or die('Invalid access');
 
 class Upload implements iPage
 {
@@ -12,7 +12,7 @@ class Upload implements iPage
         Components::bootstrap();
         Components::navbar();
         ?>
-            <span>Uploaded succesfully</span>
+            <span>Uploaded succesfully - setTimeout 2 secunde pana apare butonu de "Download is ready"</span>
             <form action="index.php">
                 <input type="hidden" name="action" value="download" />
                 <?php

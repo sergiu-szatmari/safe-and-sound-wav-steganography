@@ -1,6 +1,6 @@
 <?php
 
-!defined('_SAFE_AND_SOUND_VALID_ACCESS') && die('Invalid access');
+defined('_SAFE_AND_SOUND_VALID_ACCESS') or die('Invalid access');
 
 class About implements iPage
 {

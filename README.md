@@ -1,4 +1,4 @@
-# "Safe and Sound" Steganography Webapp
+# "Safe and Sound" WAV Steganography Webapp
 
 Project made for "Modular Arithmetics and Cryptography" course (1st year of Master - Distributed Systems in Internet)
 

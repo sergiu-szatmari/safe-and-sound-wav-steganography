@@ -1,10 +1,10 @@
 <?php
 
-!defined('_SAFE_AND_SOUND_VALID_ACCESS') && die('Invalid access');
+defined('_SAFE_AND_SOUND_VALID_ACCESS') or die('Invalid access');
 
 class Dispatcher 
 {
-    private static $pathFile        = __DIR__ . '/../utils/class.Path.php'; 
+    private static $constFile       = __DIR__ . '/../utils/class.Constants.php'; 
     private static $componentsFile  = __DIR__ . '/../utils/class.Components.php';
 
     // TODO: Security
@@ -16,9 +16,9 @@ class Dispatcher
 
     private function checkRequirements()
     {
-        if ( !file_exists(self::$pathFile) )
+        if ( !file_exists(self::$constFile) )
         {
-            throw new Exception('Path file not found');
+            throw new Exception('Constants file not found');
         }
 
         if ( !file_exists(self::$componentsFile) )
@@ -29,22 +29,22 @@ class Dispatcher
 
     private function loadComponents()
     {
-        require_once( self::$pathFile );
+        require_once( self::$constFile );
         require_once( self::$componentsFile );
 
         // Loading interfaces
         foreach ( Components::getInterfaces() as $interface ) {
-            require_once(Path::_INTERFACE_PREFIX . $interface . Path::_PHP_EXTENSION);
+            require_once(Constants::_INTERFACE_PREFIX . $interface . Constants::_PHP_EXTENSION);
         }
         
         // Loading pages
         foreach ( Components::getPages() as $page ) {
-            require_once(Path::_PAGE_PREFIX . $page . Path::_PHP_EXTENSION);
+            require_once(Constants::_PAGE_PREFIX . $page . Constants::_PHP_EXTENSION);
         }
 
         // Loading classes
         foreach ( Components::getClasses() as $class ) {
-            require_once(Path::_CLASS_PREFIX . $class . Path::_PHP_EXTENSION);
+            require_once(Constants::_CLASS_PREFIX . $class . Constants::_PHP_EXTENSION);
         }
     }
 
@@ -57,7 +57,7 @@ class Dispatcher
 
     public function listen()
     {
-        // Security ?
+        // TODO: Security
         switch ( $_SERVER['REQUEST_METHOD'] )
         {
             case 'GET':
@@ -69,7 +69,6 @@ class Dispatcher
                 break;
 
             default:
-                // echo 'Default branch: ' . $_SERVER['REQUEST_METHOD'];
                 NotFound404::setUnknownAction( $_SERVER['REQUEST_METHOD'] );
                 NotFound404::display();
         }
@@ -105,11 +104,16 @@ class Dispatcher
         switch ($action)
         {
             case 'upload':
-                $uploadManager = new UploadManager();
-                $filename = $uploadManager->manageUpload();
+
+                $filename = UploadManager::onUpload();
                 if ( !$filename ) {
                     InternalServerError500::display('Upload failed');
                 }
+
+                $message = $_POST['message'];
+
+                SteganographyManager::hide( $filename, $message );
+
                 Upload::display();
         }
     }

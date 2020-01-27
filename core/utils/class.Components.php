@@ -1,6 +1,6 @@
 <?php
 
-!defined('_SAFE_AND_SOUND_VALID_ACCESS') && die('Invalid access');
+defined('_SAFE_AND_SOUND_VALID_ACCESS') or die('Invalid access');
 
 class Components
 {
@@ -12,9 +12,10 @@ class Components
         'Upload',
         'Download',
     ];
-
+    
     private static $classesArray = [
         'UploadManager',
+        'SteganographyManager',
     ];
 
     private static $interfacesArray = [
