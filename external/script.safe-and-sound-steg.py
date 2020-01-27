@@ -14,10 +14,11 @@ def usage():
 
 def isReadable(asciiCode):
     # a ... z 
-    # A ... Z 
+    # A ... Z
+    # 0 1 ... 9
     # ' ' => space 
     # , . ? ' Newline CarriageReturn
-    return (asciiCode >= 65 and asciiCode <= 90) or (asciiCode >= 97 and asciiCode <= 122) or (asciiCode == 32) or (asciiCode in [44, 46, 63, 33, 10, 13, 39])
+    return (asciiCode >= 65 and asciiCode <= 90) or (asciiCode >= 97 and asciiCode <= 122) or (asciiCode >= 48 and asciiCode <= 57) or (asciiCode == 32) or (asciiCode in [44, 46, 63, 33, 10, 13, 39])
 
 def prepare(wavFilename, secretFilename, outputWavFilename, lsbCount):
     soundFile = wave.open(wavFilename, "r")
