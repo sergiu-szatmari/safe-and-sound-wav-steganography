@@ -6,8 +6,7 @@ try {
 
     require_once( __DIR__ . '/core/classes/class.Dispatcher.php');
 
-    $dispatcher = new Dispatcher();
-    $dispatcher->listen();
+    Dispatcher::listen();
 
 } catch (Exception $ex) {
 

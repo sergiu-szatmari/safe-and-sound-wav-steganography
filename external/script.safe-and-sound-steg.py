@@ -13,37 +13,30 @@ def usage():
     print("'Extract' usage ex:          python safe-and-sound-steg.py --extract --file [wavWithSecretMessage.wav]   --output [outputTxt.txt]    --lsb-count 2")
 
 def isReadable(asciiCode):
-    # a ... z 
-    # A ... Z
-    # 0 1 ... 9
-    # ' ' => space 
-    # , . ? ' Newline CarriageReturn
     return (asciiCode >= 65 and asciiCode <= 90) or (asciiCode >= 97 and asciiCode <= 122) or (asciiCode >= 48 and asciiCode <= 57) or (asciiCode == 32) or (asciiCode in [44, 46, 63, 33, 10, 13, 39])
 
 def prepare(wavFilename, secretFilename, outputWavFilename, lsbCount):
     soundFile = wave.open(wavFilename, "r")
     
-    soundFileParameters     = soundFile.getparams()     # returns tuple (nchannels, sampwidth, framerate, nframes, comptype, compname)
-    channelCount            = soundFile.getnchannels()  # Nr. of channels --> 1='mono', 2='stereo'
-    sampleWidth             = soundFile.getsampwidth()  # Sample width in bytes
-    frameCount              = soundFile.getnframes()    # Number of audio frames
-    sampleCount             = frameCount * channelCount # Sample count
+    soundFileParameters     = soundFile.getparams()     
+    channelCount            = soundFile.getnchannels()  
+    sampleWidth             = soundFile.getsampwidth()  
+    frameCount              = soundFile.getnframes()    
+    sampleCount             = frameCount * channelCount 
 
-    if (sampleWidth == 1):  # mono
+    if (sampleWidth == 1):  
         
-        fmt = "{}B".format(sampleCount)
-        mask = (1 << 8) - (1 << lsbCount)   # Used to set the least significant lsbCount bits of an integer to zero
-        smallestByte = -(1 << 7)            # The least possible value for a sample in the soundFile file is actually
-                                            #   zero, but we don't skip any samples for 8 bit depth wav files.
+        fmt             = "{}B".format(sampleCount)
+        mask            = (1 << 8) - (1 << lsbCount)   
+        smallestByte    = -(1 << 7)            
     
-    elif (sampleWidth == 2):  # stereo
+    elif (sampleWidth == 2):  
         
-        fmt = "{}h".format(sampleCount)
-        mask = (1 << 15) - (1 << lsbCount)  # Used to set the least significant lsbCount bits of an integer to zero
-        smallestByte = -(1 << 15)           # The least possible value for a sample in the soundFile file
+        fmt             = "{}h".format(sampleCount)
+        mask            = (1 << 15) - (1 << lsbCount)  
+        smallestByte    = -(1 << 15)           
     
     else:
-        # Python's wave module doesn't support higher sample widths
         raise ValueError("File has an unsupported bit-depth")
 
     params                          = dict()
@@ -63,19 +56,18 @@ def prepare(wavFilename, secretFilename, outputWavFilename, lsbCount):
 
 def stegEnc(params):
     
-    wavFilename         = params['wavFilename']
-    secretFilename      = params['secretFilename']
-    outputWavFilename   = params['outputWavFilename']
-    lsbCount            = params['lsbCount']
-    soundFile           = params['soundFile']
-    soundFileParameters = params['soundFileParameters']
-    frameCount          = params['frameCount']
-    sampleCount         = params['sampleCount']
-    fmt                 = params['fmt'] 
-    mask                = params['mask']
-    smallestByte        = params['smallestByte']
+    wavFilename             = params['wavFilename']
+    secretFilename          = params['secretFilename']
+    outputWavFilename       = params['outputWavFilename']
+    lsbCount                = params['lsbCount']
+    soundFile               = params['soundFile']
+    soundFileParameters     = params['soundFileParameters']
+    frameCount              = params['frameCount']
+    sampleCount             = params['sampleCount']
+    fmt                     = params['fmt'] 
+    mask                    = params['mask']
+    smallestByte            = params['smallestByte']
 
-    # We can hide up to lsbCount bits in each sample of the soundFile file
     bytesToHideMaxCount     = (sampleCount * lsbCount) // 8
     filesize                = os.stat(secretFilename).st_size
     
@@ -85,40 +77,32 @@ def stegEnc(params):
     
     print("Using {} B out of {} B".format(filesize, bytesToHideMaxCount))
     
-    # Put all the samples from the soundFile file into a list
+    
     rawData = list(struct.unpack(fmt, soundFile.readframes(frameCount)))
     soundFile.close()
     
-    inputData = memoryview(open(secretFilename, "rb").read())
-    
-    # The number of bits we've processed from the input file
+    inputData               = memoryview(open(secretFilename, "rb").read())
     dataIndex               = 0
     soundIndex              = 0
     
-    # "alteredSoundFileData" will hold the altered soundFile data
     alteredSoundFileData    = []
     buffer                  = 0
     bufferLength            = 0
     done                    = False
     
     while(not done):
+
         while (bufferLength < lsbCount and dataIndex // 8 < len(inputData)):
-            # If we don't have enough data in the buffer, add the
-            # rest of the next byte from the file to it.
             buffer          += (ord(inputData[dataIndex // 8]) >> (dataIndex % 8)) << bufferLength
             bitsAdded       = 8 - (dataIndex % 8)
             bufferLength    += bitsAdded
             dataIndex       += bitsAdded
             
-        # Retrieve the next lsbCount bits from the buffer for use later
         currentData     = buffer % (1 << lsbCount)
         buffer          >>= lsbCount
         bufferLength    -= lsbCount
 
         while (soundIndex < len(rawData) and rawData[soundIndex] == smallestByte):
-            # If the next sample from the soundFile file is the smallest possible
-            # value, we skip it. Changing the LSB of such a value could cause
-            # an overflow and drastically change the sample in the output.
             alteredSoundFileData.append(struct.pack(fmt[-1], rawData[soundIndex]))
             soundIndex += 1
 
@@ -128,26 +112,17 @@ def stegEnc(params):
 
             sign = 1
             if (currentSample < 0):
-                # We alter the LSBs of the absolute value of the sample to
-                # avoid problems with two's complement. This also avoids
-                # changing a sample to the smallest possible value, which we
-                # would skip when attempting to recover data.
                 currentSample   = -currentSample
                 sign            = -1
 
-            # Bitwise AND with mask turns the lsbCount least significant bits
-            # of currentSample to zero. Bitwise OR with currentData replaces
-            # these least significant bits with the next lsbCount bits of data.
-            alteredSample = sign * ((currentSample & mask) | currentData)
 
+            alteredSample = sign * ((currentSample & mask) | currentData)
             alteredSoundFileData.append(struct.pack(fmt[-1], alteredSample))
 
         if (dataIndex // 8 >= len(inputData) and bufferLength <= 0):
             done = True
         
     while(soundIndex < len(rawData)):
-        # At this point, there's no more data to hide. So we append the rest of
-        # the samples from the original soundFile file.
         alteredSoundFileData.append(struct.pack(fmt[-1], rawData[soundIndex]))
         soundIndex += 1
     
@@ -169,35 +144,29 @@ def stegDec(params):
     fmt                 = params['fmt'] 
     smallestByte        = params['smallestByte']
 
-    # Put all the samples from the soundFile file into a list
-    rawData         = list(struct.unpack(fmt, soundFile.readframes(frameCount)))
+    rawData             = list(struct.unpack(fmt, soundFile.readframes(frameCount)))
 
-    # Used to extract the least significant lsbCount bits of an integer
-    mask            = (1 << lsbCount) - 1
-    outputFile      = open(outputWavFilename, "wb+")
-    
-    data            = bytearray()
-    soundIndex      = 0 
-    buffer          = 0
-    bufferLength    = 0
+    mask                = (1 << lsbCount) - 1
+    outputFile          = open(outputWavFilename, "wb+")
+
+    data                = bytearray()
+    soundIndex          = 0 
+    buffer              = 0
+    bufferLength        = 0
     soundFile.close()
 
     while not extractionEnded:
         
         nextSample = rawData[soundIndex]
         if (nextSample != smallestByte):
-            # Since we skipped samples with the minimum possible value when
-            # hiding data, we do the same here.
             buffer          += (abs(nextSample) & mask) << bufferLength
             bufferLength    += lsbCount
+
         soundIndex += 1
         
         while (bufferLength >= 8):
-            # If we have more than a byte in the buffer, add it to data
-            # and decrement the number of bytes left to recover.
             currentData     = buffer % (1 << 8)
 
-            # Break when there is a non-readable character
             if not isReadable(ord(struct.pack('1B', currentData))):
                 extractionEnded = True
                 break

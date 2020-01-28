@@ -13,6 +13,18 @@ class Utils
                 ".wav",
                 "",
                 $filename
-            ));
+            )
+        );
+    }
+
+    public static function logObject( $object )
+    {
+        echo json_encode( $object, JSON_PRETTY_PRINT );
+        echo '<br/>';
+    }
+
+    public static function logMessage( $message )
+    {
+        echo $message . '<br/>';
     }
 }

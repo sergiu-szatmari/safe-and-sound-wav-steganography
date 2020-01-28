@@ -6,31 +6,31 @@ class Dispatcher
 {
     private static $requiredClassesDir = __DIR__ . '/../utils/';
     private static $requiredClasses = [
-        'Constants',
-        'Components',
-        'Utils'
+        'class.Constants.php',
+        'class.Components.php',
+        'class.Utils.php'
     ];
 
     // TODO: Security
-    private $allowedActions = [
+    private static $allowedActions = [
         'home',
         'about',
         'download',
     ];
 
-    private function checkRequirements()
+    private static function checkRequirements()
     {
         foreach ( self::$requiredClasses as $className ) {
-            if ( !file_exists( self::$requiredClassesDir . 'class.' . $className . '.php') ) {
+            if ( !file_exists( self::$requiredClassesDir . $className) ) {
                 throw new Exception("$className not found.");
             }
         }
     }
 
-    private function loadComponents()
+    private static function loadComponents()
     {
         foreach ( self::$requiredClasses as $className ) {
-            require_once( self::$requiredClassesDir . 'class.' . $className . '.php' );
+            require_once( self::$requiredClassesDir . $className );
         }
 
         // Loading interfaces
@@ -49,24 +49,26 @@ class Dispatcher
         }
     }
 
-    public function __construct()
+    private static function initialize()
     {
-        $this->checkRequirements();
+        self::checkRequirements();
 
-        $this->loadComponents();
+        self::loadComponents();
     }
 
-    public function listen()
+    public static function listen()
     {
+        self::initialize();
+
         // TODO: Security
         switch ( $_SERVER['REQUEST_METHOD'] )
         {
             case 'GET':
-                $this->get();
+                self::get();
                 break;
 
             case 'POST':
-                $this->post();
+                self::post();
                 break;
 
             default:
@@ -82,7 +84,7 @@ class Dispatcher
             Home::display();
         }
 
-        if ( in_array($action, $this->allowedActions) )
+        if ( in_array($action, self::$allowedActions) )
         {
             $actionClassMapping = Components::getActionClassMapping();
             $pageClass = $actionClassMapping[$action];

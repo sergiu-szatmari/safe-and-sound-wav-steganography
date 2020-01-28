@@ -4,7 +4,7 @@ defined('_SAFE_AND_SOUND_VALID_ACCESS') or die('Invalid access');
 
 class FileManager
 {
-    private static function checkRequirements()
+    private static function checkRequirements() : void
     {
         if ( !file_exists(Constants::_DIR_UPLOADS) ) {
             if ( !mkdir(Constants::_DIR_UPLOADS) ) {
@@ -34,7 +34,7 @@ class FileManager
 
     }
 
-    private static function upload()
+    private static function upload() : string
     {
         $filenameHash   = sha1( basename( $_FILES['stegfile']['name']) );
         $newFilename    = $filenameHash . Constants::_WAV_EXTENSION;
@@ -49,7 +49,7 @@ class FileManager
         return $newFilename;
     }
 
-    public static function onUpload()
+    public static function onUpload() : string
     {
         self::checkRequirements();
 
@@ -58,7 +58,7 @@ class FileManager
         return $newFilename;
     }
 
-    public static function onDownload( $stegFilename )
+    public static function onDownload( $stegFilename ) : void
     {
         $stegFile = Constants::_DIR_EXTERNAL . $stegFilename;
         
@@ -70,5 +70,23 @@ class FileManager
         fpassthru($fp);
         fclose($fp);
         die;
+    }
+
+    public function getStegFilenames() : array
+    {
+        $dirContent     = scandir( Constants::_DIR_EXTERNAL );
+        $stegFiles      = [];
+        
+        foreach ( $dirContent as $filename ) {
+            
+            // Skipping any file that isn't named "steg_..."
+            if ( false === strpos($filename, Constants::_STEG_FILE_PREFIX) ) {
+                continue;
+            }
+            
+            $stegFiles[] = $filename;
+        }
+
+        return $stegFiles;
     }
 }

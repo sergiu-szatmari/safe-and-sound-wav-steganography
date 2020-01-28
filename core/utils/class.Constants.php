@@ -15,9 +15,9 @@ class Constants
     public const _DIR_UPLOADS                       = self::_DIR_PROJECT . 'uploads/';
     public const _DIR_EXTERNAL                      = self::_DIR_PROJECT . 'external/';
 
-    public const _PAGE_PREFIX                       = self::_DIR_PAGE . 'page.';
-    public const _CLASS_PREFIX                      = self::_DIR_CLASS . 'class.';
-    public const _INTERFACE_PREFIX                  = self::_DIR_INTERFACE . 'interface.';
+    public const _PAGE_PREFIX                       = self::_DIR_PAGE       . 'page.';
+    public const _CLASS_PREFIX                      = self::_DIR_CLASS      . 'class.';
+    public const _INTERFACE_PREFIX                  = self::_DIR_INTERFACE  . 'interface.';
     public const _STEG_FILE_PREFIX                  = 'steg_';
 
     public const _PHP_EXTENSION                     = '.php';

@@ -1,3 +1,4 @@
 uploads/*
 external/*
 !external/script.*
+!external/index.php

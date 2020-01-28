@@ -68,13 +68,9 @@ class Components
                     foreach ( self::$actionClassMapping as $action => $className )
                     {
                         if ( $page == $className ) {
-                            ?> 
-                            <li class="nav-item active"> 
-                            <?php
+                            ?> <li class="nav-item active"> <?php
                         } else {
-                            ?> 
-                            <li class="nav-item"> 
-                            <?php
+                            ?> <li class="nav-item"> <?php
                         }
                         ?> 
                         <a class="nav-link" href="index.php?action=<?php echo $action; ?>">
@@ -92,5 +88,67 @@ class Components
                 </ul>
             </nav>
         <?php
+    }
+
+    public static function javascript( $page )
+    {
+        switch ( $page )
+        {
+            case 'Download':
+                ?>
+                <script>
+            
+                document.querySelectorAll('.btn').forEach(button => {
+                
+                    const filename = button.value;
+
+                    button.addEventListener('mouseover', () => {
+                        button.value = '';
+                        button.value = 'Download';
+                        button.classList.add('btn-success');
+                        button.classList.remove('btn-default');
+                    });
+
+                    button.addEventListener('mouseout', () => {
+                        button.value = '';
+                        button.value = filename;
+                        button.classList.add('btn-default');
+                        button.classList.remove('btn-success');
+                    });
+
+                    button.addEventListener('click', () => {
+                        button.value = 'Please wait . . .';
+                        setTimeout(() => {
+                            button.value = '';
+                            button.value = filename;
+                            button.classList.add('btn-default');
+                            button.classList.remove('btn-success');
+                        }, 3000);
+                    });
+                });
+                </script>
+                <?php
+                break;
+        }
+    }
+
+    public static function css( $page ) 
+    {
+        switch ( $page ) 
+        {
+            case 'Download':
+                ?>
+                <style>
+                    .downloads-container {
+                        margin: auto;
+                        width: auto;
+                        padding-top: 15vh;
+                        padding-bottom: 15vh;
+                        overflow: auto;
+                    }
+                </style>
+                <?php
+                break;
+        }
     }
 }
