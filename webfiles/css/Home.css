@@ -1,0 +1,21 @@
+.container {
+    text-align: center;
+    top: 10vh;
+    background-color: #f2f2f2;
+    border-radius: 30px;
+    font-family: 'Arial';
+}
+
+form {
+    display: inline-block;
+}
+
+form.upload-form-field {
+    margin-top: 5vh;
+
+}
+
+input {
+    display: block;
+    margin: auto;
+}

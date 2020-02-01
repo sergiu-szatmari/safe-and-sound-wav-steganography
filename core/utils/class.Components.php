@@ -61,7 +61,10 @@ class Components
         self::css( 'Navbar' );
         ?>
             <nav class="navbar navbar-expand-lg navbar-light justify-content-end">
-                <a class="navbar-brand mb-0 h1" style="color: white; position: fixed; left: 10px;" href="index.php">
+                <a class="safe-and-sound-brand-logo">
+                    <img alt="logo" src="<?= Constants::_DIR_IMG . Constants::_LOGO_IMG_NAME . Constants::_PNG_EXTENSION ?>" />
+                </a>
+                <a class="safe-and-sound-brand navbar-brand navbar-left mb-0 h1" style="color: white; position: fixed; left: 10px;" href="index.php">
                     Safe & Sound
                 </a>
 
@@ -86,219 +89,25 @@ class Components
                 ?>
                 </ul>
             </nav>
+
         <?php
     }
 
     public static function javascript( $page )
     {
-        switch ( $page )
-        {
-            case 'Download':
-                ?>
-                <script>
-            
-                document.querySelectorAll('.btn').forEach(button => {
-                
-                    const filename = button.value;
-
-                    button.addEventListener('mouseover', () => {
-                        button.value = '';
-                        button.value = 'Download';
-                        button.classList.add('btn-success');
-                        button.classList.remove('btn-default');
-                    });
-
-                    button.addEventListener('mouseout', () => {
-                        button.value = '';
-                        button.value = filename;
-                        button.classList.add('btn-default');
-                        button.classList.remove('btn-success');
-                    });
-
-                    button.addEventListener('click', () => {
-                        button.value = 'Please wait . . .';
-                        setTimeout(() => {
-                            button.value = '';
-                            button.value = filename;
-                            button.classList.add('btn-default');
-                            button.classList.remove('btn-success');
-                        }, 3000);
-                    });
-                });
-                </script>
-                <?php
-                break;
-
-            case 'Upload':
-                ?>
-                <script>
-                    setTimeout(() => {
-                        document.querySelectorAll('.btn').forEach(button => {
-                            button.classList.remove('hidden');
-                            button.classList.add('visible');
-                            button.style.animation = '2s show ease-in-out';
-                            button.addEventListener('animationend', () => {
-                                button.style.animation = '';
-                            });
-                        });
-                    }, 2000);
-                </script>
-                <?php
-                break;
-
-            case 'Home':
-                ?>
-                <script>
-                    const hideIdx           = 1;
-                    const extractIdx        = 2;
-                    const selectElement     = document.querySelector('select');
-                    const messageInput      = document.querySelector('#upload-form-message');
-                    selectElement.addEventListener('change', () => {
-
-                        switch (selectElement.selectedIndex) {
-                            case hideIdx:
-                                messageInput.required = true;
-                                break;
-
-                            case extractIdx:
-                                messageInput.required = false;
-                                break;
-                        }
-                    });
-                </script>
-                <?php
-        }
+        ?>
+        <script>
+            <?php include_once( Constants::_DIR_JS . $page . Constants::_JS_EXTENSION ); ?>
+        </script>
+        <?php
     }
 
     public static function css( $page ) 
     {
-        switch ( $page ) 
-        {
-            case 'Body-General':
-                ?>
-                <style>
-                    body {
-                        background: linear-gradient(#87B784, #9DC497, #B6D6AD, #B9D8B0, #C1DEB3);
-                    }
-                </style>
-                <?php
-                break;
-
-            case 'Navbar':
-                ?>
-                <style>
-                    .navbar-brand {
-                        user-select: none;
-                        cursor: pointer;
-                    }
-
-                    nav {
-                        background: #72966f;
-                        color: white;
-                    }
-
-                    li {
-                        color: white;
-                    }
-
-                    .active-page-nav a span {
-                        color: #bababa;
-                    }
-
-                    .page-name {
-                        color: white;
-                    }
-                </style>
-                <?php
-                break;
-
-            case 'Download':
-                ?>
-                <style>
-                    .downloads-container {
-                        margin: auto;
-                        width: auto;
-                        padding-top: 15vh;
-                        padding-bottom: 15vh;
-                        overflow: auto;
-                    }
-                </style>
-                <?php
-                break;
-
-            case 'Home':
-                ?>
-                <style>
-                    .container {
-                        text-align: center;
-                        top: 10vh;
-                        background-color: #f2f2f2;
-                        border-radius: 30px;
-                        font-family: 'Arial';
-                    }
-
-                    form {
-                        display: inline-block;
-                    }
-
-                    form.upload-form-field {
-                        margin-top: 5vh;
-                        
-                    }
-
-                    input {
-                        display: block;
-                        margin: auto;
-                    }
-
-                </style>
-                <?php
-                break;
-
-            case 'Upload':
-                ?>
-                <style>
-                    h3 i {
-                        font-weight: bold;
-                    }
-
-                    .hidden {
-                        opacity: 0;
-                    }
-
-                    .visible {
-                        opacity: 1;
-                    }
-
-                    .upload-page-hash {
-                        background-color: #f2f2f2;
-                        width: auto;
-                        margin-top: 30px;
-                        text-align: center;
-                        overflow: auto;
-                        border-radius: 20px;
-                        margin-left: 25vw;
-                        margin-right: 25vw;
-                    }
-
-                    .upload-page-buttons {
-                        margin-top: 30px;
-                        text-align: center;
-                    }
-
-                    @keyframes show {
-                        0% {
-                            opacity: 0;
-                        }
-                        50% {
-                            opacity: 0.5;
-                        }
-                        100% {
-                            opacity: 1;
-                        }
-                    }
-                </style>
-                <?php
-        }
+        ?>
+            <style type="text/css">
+                <?php include_once( Constants::_DIR_CSS . $page . Constants::_CSS_EXTENSION ); ?>
+            </style>
+        <?php
     }
 }

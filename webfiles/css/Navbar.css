@@ -1,0 +1,30 @@
+.navbar-brand {
+    user-select: none;
+    cursor: pointer;
+}
+
+nav {
+    background: #72966f;
+    color: white;
+    max-height: 100px;
+}
+
+img {
+    height: 100px;
+    object-fit: contain;
+}
+
+li {
+    color: white;
+}
+
+.active-page-nav a span {
+    color: #bababa;
+}
+
+.page-name {
+    color: white;
+}
+
+.safe-and-sound-brand-logo {
+}
