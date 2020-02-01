@@ -86,7 +86,7 @@ class SteganographyManager
 
         $message = self::executeStegExtract( $filename );
 
-        // self::cleanUp( $filename );
+         self::cleanUp( $filename );
 
         return $message;
     }

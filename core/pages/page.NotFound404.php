@@ -18,9 +18,13 @@ class NotFound404 implements iPage
 
         Components::bootstrap();
         Components::navbar();
+        Components::css( 'Upload' );
         ?>
             <div class="notfound404-container">
-                The requested action ("<?php echo self::$unknownAction; ?>") cannot be found.
+
+            </div>
+            <div class="upload-page-hash">
+                <h3>The requested action ("<?= self::$unknownAction; ?>") cannot be found.</h3>
             </div>
         <?php
         header("HTTP/1.1 404 Not Found");

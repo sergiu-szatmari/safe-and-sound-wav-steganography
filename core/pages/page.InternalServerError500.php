@@ -11,9 +11,10 @@ class InternalServerError500 implements iPage
 
         Components::bootstrap();
         Components::navbar();
+        Components::css( 'Upload' );
         ?>
-        <div class="internal-server-error-container">
-            <span> Server encountered an unexpected error . . . <?php echo $errorMessage ?? ''; ?> </span>
+        <div class="upload-page-hash">
+            <h3>Server encountered an unexpected error . . . ("<?= ($errorMessage ?? ''); ?>")</h3>
         </div>
         <?php
         header('HTTP/1.1 500 Internal Server Error');

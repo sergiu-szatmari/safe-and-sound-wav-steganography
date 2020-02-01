@@ -21,13 +21,13 @@ class Download implements iPage
                 <?php
                     if (count($filenames) > 0):
                         foreach ( $filenames as $file ): ?>
-                    <li class="list-group" style="text-align: center;">
-                        <form action="index.php" method='POST'>
-                            <input type="hidden" name="action" value="download">
-                            <input type="hidden" name="stegFilename" value="<?php echo $file; ?>">
-                            <input type="submit" value="<?php echo $file; ?>" class="btn btn-default" style="display: inline-block; width: 45vw; float: center; font-weight: bold;" >
-                        </form>
-                    </li>
+                            <li class="list-group" style="text-align: center;">
+                                <form action="index.php" method='POST'>
+                                    <input type="hidden" name="action" value="download">
+                                    <input type="hidden" name="stegFilename" value="<?= $file; ?>">
+                                    <input type="submit" value="<?= $file; ?>" class="btn btn-default" style="display: inline-block; width: 45vw; font-weight: bold;" >
+                                </form>
+                            </li>
                 <?php
                         endforeach;
                     else:

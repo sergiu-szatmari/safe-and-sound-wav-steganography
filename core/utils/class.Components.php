@@ -55,7 +55,7 @@ class Components
         <?php
     }
 
-    public static function navbar( $page = 'Home' )
+    public static function navbar( $page = '' )
     {
         self::css( 'Body-General' );
         self::css( 'Navbar' );
@@ -76,9 +76,9 @@ class Components
                         }
                         ?> 
                         <a class="nav-link" href="index.php?action=<?php echo $action; ?>">
-                            <span class="page-name"><?php
-                                echo $className;
-                            ?></span>
+                            <span class="page-name">
+                                <?= $className; ?>
+                            </span>
                         </a>
                         </li>
                         <?php                
