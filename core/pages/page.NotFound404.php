@@ -11,7 +11,7 @@ class NotFound404 implements iPage
         self::$unknownAction = $unknownAction;
     }
 
-    public static function display()
+    public static function display( $action = null, $arg = null )
     {
         ob_clean();
         ob_start();

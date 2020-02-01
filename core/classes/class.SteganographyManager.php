@@ -30,21 +30,30 @@ class SteganographyManager
         }
     }
 
-    private static function prepare( $filename, $message )
+    private static function prepare( $filename, $message = '' )
     {
         # Moving file so the scripts can alter it
         self::moveFile( $filename );
 
         # Preparing the message
-        self::execute( "cd external/ && echo $message > data.txt" ); 
+        if ( !$message ) {
+            $message = '""';
+        }
+        self::execute( "cd external/ && echo {$message} > data.txt" ); 
     }
 
-    private static function executeSteg( $filename )
+    private static function executeStegHide( $filename )
     {
         $stegFilename = Constants::_STEG_FILE_PREFIX . $filename;
         self::execute( "cd external/ && call script.hide.bat data.txt $filename $stegFilename 2" );
 
         return $stegFilename;
+    }
+
+    private static function executeStegExtract( $filename )
+    {
+        self::execute( "cd external/ && call script.extract.bat $filename ./data.txt 2");
+        return file_get_contents( Constants::_DIR_EXTERNAL . 'data.txt' );
     }
 
     private static function cleanUp( $filename )
@@ -64,7 +73,7 @@ class SteganographyManager
     {
         self::prepare( $filename, $message );
         
-        $stegFilename = self::executeSteg( $filename );
+        $stegFilename = self::executeStegHide( $filename );
 
         self::cleanUp( $filename );
 
@@ -73,7 +82,12 @@ class SteganographyManager
 
     public static function extract( $filename )
     {
-        throw new Exception( __CLASS__ . '::' . __FUNCTION__ . ' not implemented.');
-        // ...
+        self::prepare( $filename, $message = '' );
+
+        $message = self::executeStegExtract( $filename );
+
+        // self::cleanUp( $filename );
+
+        return $message;
     }
 }

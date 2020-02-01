@@ -4,7 +4,7 @@ defined('_SAFE_AND_SOUND_VALID_ACCESS') or die('Invalid access');
 
 class Download implements iPage
 {
-    public static function display( $stegFilename = null )
+    public static function display( $action = null, $arg = null )
     {
         ob_clean();
         ob_start();
@@ -17,17 +17,28 @@ class Download implements iPage
         
         ?>
         <div class="downloads-container">
-        <ul class="list-group">
-            <?php foreach ( $filenames as $file ): ?>
-                <li class="list-group" style="text-align: center;"> 
-                    <form action="index.php" method='POST'>
-                        <input type="hidden" name="action" value="download">
-                        <input type="hidden" name="stegFilename" value="<?php echo $file; ?>">
-                        <input type="submit" value="<?php echo $file; ?>" class="btn btn-default" style="display: inline-block; width: 45vw; float: center; font-weight: bold;" >
-                    </form>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+            <ul class="list-group">
+                <?php
+                    if (count($filenames) > 0):
+                        foreach ( $filenames as $file ): ?>
+                    <li class="list-group" style="text-align: center;">
+                        <form action="index.php" method='POST'>
+                            <input type="hidden" name="action" value="download">
+                            <input type="hidden" name="stegFilename" value="<?php echo $file; ?>">
+                            <input type="submit" value="<?php echo $file; ?>" class="btn btn-default" style="display: inline-block; width: 45vw; float: center; font-weight: bold;" >
+                        </form>
+                    </li>
+                <?php
+                        endforeach;
+                    else:
+                ?>
+                    <li class="list-group" style="text-align: center;" >
+                        <h2>There are no files to download :(</h2>
+                    </li>
+                <?php
+                    endif;
+                ?>
+            </ul>
         </div>
         <?php
         

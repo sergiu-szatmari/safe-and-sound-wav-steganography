@@ -72,7 +72,7 @@ class FileManager
         die;
     }
 
-    public function getStegFilenames() : array
+    public static function getStegFilenames() : array
     {
         $dirContent     = scandir( Constants::_DIR_EXTERNAL );
         $stegFiles      = [];

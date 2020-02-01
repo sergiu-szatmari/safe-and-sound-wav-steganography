@@ -77,7 +77,7 @@ class Dispatcher
         }
     }
 
-    private function get()
+    private static function get()
     {
         $action = $_GET['action'] ?? null;
         if ( !$action ) {
@@ -96,7 +96,7 @@ class Dispatcher
         }
     }
 
-    private function post()
+    private static function post()
     {
         $action = $_POST['action'] ?? null;
         if ( !$action ) {
@@ -114,10 +114,18 @@ class Dispatcher
                 }
 
                 $message        = $_POST['message'];
-                $stegFilename   = SteganographyManager::hide( $filename, $message );
+                $actionType     = $_POST['actiontype'];
 
-                Upload::display( $stegFilename );
-                
+                if ( $actionType === 'hide' ) {
+
+                    $stegFilename = SteganographyManager::hide( $filename, $message );
+                    Upload::display( $action = 'hidden', $stegFilename );
+                } else {
+
+                    $message = SteganographyManager::extract( $filename );
+                    Upload::display( $action = 'extracted', $message );
+                }
+                    
                 break;
 
             case 'download':
