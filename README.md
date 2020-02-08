@@ -4,6 +4,10 @@ Web app for embedding secret text messages into **.wav** sound files. The app ha
 
 The project was made for the "Modular Arithmetics and Cryptography" course (1st year of Master - Distributed Systems in Internet).
 
+<p align="center">
+    <img width=250px src="./webfiles/img/safe-and-sound-logo.png">
+</p>
+
 ## Prerequisites
 
 1. Add **.py** in the file **[ _ApacheDir_ ]/conf/httpd.conf** at the end of the line so the _PHP_ app can run the _Python_ script.

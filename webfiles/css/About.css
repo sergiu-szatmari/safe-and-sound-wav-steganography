@@ -1,0 +1,42 @@
+h3 i {
+    font-weight: bold;
+}
+
+.hidden {
+    opacity: 0;
+}
+
+.visible {
+    opacity: 1;
+}
+
+.about-block-content-container {
+    user-select: none;
+    background-color: #f2f2f2;
+    width: auto;
+    /*overflow: auto;*/
+    border-radius: 20px;
+
+    margin: 30px 25vw 30px 25vw;
+    padding: 20px;
+}
+
+.about-block-title {
+    text-align: center;
+}
+
+.about-block-content {
+    text-align: justify;
+    text-justify: inter-word;
+    overflow-x: hidden;
+}
+
+.about-block-content img {
+    width: 850px;
+    height: 300px;
+    object-fit: contain;
+}
+
+.bold-text {
+    font-weight: bold;
+}

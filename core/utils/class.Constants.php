@@ -34,5 +34,9 @@ class Constants
     public const _WAV_FILE_TYPE                     = 'audio/wav';
     public const _WAV_FILE_INT_MAX_SIZE_ALLOWED     = 25000000;
 
-    public const _LOGO_IMG_NAME                      = 'safe-and-sound-logo';
+    public const _LOGO_IMG_NAME                     = 'safe-and-sound-logo';
+    public const _LSB_IMG_NAME                      = 'safe-and-sound-lsb';
+
+    public const _LOGO_SRC                          = self::_DIR_IMG . self::_LOGO_IMG_NAME . self::_PNG_EXTENSION;
+    public const _LSB_SRC                           = self::_DIR_IMG . self::_LSB_IMG_NAME  . self::_PNG_EXTENSION;
 }

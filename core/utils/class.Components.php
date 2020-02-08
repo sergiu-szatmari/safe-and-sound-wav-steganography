@@ -28,6 +28,41 @@ class Components
         'download'  => 'Download'
     ];
 
+    private static $aboutPageTextContent = [
+        'safe-and-sound-about'  => [
+            'title' =>
+                '
+                "Safe & Sound" WAV Steganography Webapp
+                ',
+            'content' =>
+                '
+                The app uses the "Least Significant Bit" steganography method to embed a secret message in a .wav audio file. The webapp uses a Python script to do the proper embedding of the message, and PHP language for preprocessing the data and web UI rendering.
+                ',
+        ],
+        'steganography-about'   => [
+            'title' =>
+                '
+                Steganography
+                ',
+            'content' =>
+                '
+                "Steganography" represents the practice of concealing a file, message, image or video within another file, message or other type of media. The advantage of steganography over cryptography alone is that the intended secret message does not attract attention to itself as an object of scrutiny. Plainly visible encrpyted messages, no matter how unbreakable they are, arouse interest and may in themselves be incrimitating in countries in which encryption is illegal.
+                ',
+        ],
+        'lsb-about'             => [
+            'title' =>
+                '
+                Audio steganography method: "Least Significant Bit"
+                ',
+            'content' =>
+                '
+                The "LSB" method is one of the earliest that was used in steganography. It consists of embedding each bit from the message in the least significant bit of the cover audio in a deterministic way.
+                
+                <img alt="lsb" src="' . Constants::_LSB_SRC . '" />
+                '
+        ]
+    ];
+
     public static function getPages()
     {
         return self::$pagesArray;
@@ -60,13 +95,15 @@ class Components
         self::css( 'Body-General' );
         self::css( 'Navbar' );
         ?>
-            <nav class="navbar navbar-expand-lg navbar-light justify-content-end">
-                <a class="safe-and-sound-brand-logo">
-                    <img alt="logo" src="<?= Constants::_DIR_IMG . Constants::_LOGO_IMG_NAME . Constants::_PNG_EXTENSION ?>" />
-                </a>
-                <a class="safe-and-sound-brand navbar-brand navbar-left mb-0 h1" style="color: white; position: fixed; left: 10px;" href="index.php">
-                    Safe & Sound
-                </a>
+            <nav class="navbar navbar-expand-lg navbar-light justify-content-between">
+                <div>
+                    <a class="safe-and-sound-brand-logo">
+                        <img alt="logo" src="<?= Constants::_LOGO_SRC ?>" />
+                    </a>
+                    <a class="safe-and-sound-brand navbar-brand navbar-left mb-0 h1" style="color: white; margin-left: 15px;    " href="index.php">
+                        Safe & Sound
+                    </a>
+                </div>
 
                 <ul class="navbar-nav">
                 <?php
@@ -109,5 +146,36 @@ class Components
                 <?php include_once( Constants::_DIR_CSS . $page . Constants::_CSS_EXTENSION ); ?>
             </style>
         <?php
+    }
+
+    public static function textBlock( $title, $text )
+    {
+        ?>
+        <div class="about-block-content-container">
+            <div class="about-block-title">
+                <h3 class="bold-text">
+                    <?= $title ?>
+                </h3>
+            </div>
+            <div class="about-block-content">
+                <h3>
+                    <?= str_replace("\n", "<br/>", $text); ?>
+                </h3>
+            </div>
+        </div>
+        <?php
+    }
+
+    public static function pageContent( $page, $section, $subsection )
+    {
+        switch ( $page )
+        {
+            case 'About':
+                return self::$aboutPageTextContent[$section][$subsection];
+                break;
+
+            default:
+                return '';
+        }
     }
 }

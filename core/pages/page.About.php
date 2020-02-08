@@ -9,15 +9,27 @@ class About implements iPage
         ob_clean();
         ob_start();
 
+        Components::css( __CLASS__ );
         Components::bootstrap();
         Components::navbar( __CLASS__ );
         ?>
         <div class="about-container">
-            <ul id="about-list">
-                <li id="about-list-element">Some about text</li>
-                <li id="about-list-element">Some other about text</li>
-                <li id="about-list-element">Final about text?</li>
-            </ul>
+
+            <?php Components::textBlock(
+                Components::pageContent( __CLASS__, 'safe-and-sound-about', 'title' ),
+                Components::pageContent( __CLASS__, 'safe-and-sound-about', 'content' )
+            ); ?>
+
+            <?php Components::textBlock(
+                Components::pageContent( __CLASS__, 'steganography-about', 'title'),
+                Components::pageContent( __CLASS__, 'steganography-about', 'content')
+            ); ?>
+
+            <?php Components::textBlock(
+                Components::pageContent( __CLASS__, 'lsb-about', 'title'),
+                Components::pageContent( __CLASS__, 'lsb-about', 'content')
+            ); ?>
+
         </div>
         <?php
         die;

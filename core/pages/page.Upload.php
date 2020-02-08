@@ -42,7 +42,14 @@ class Upload implements iPage
             case 'extracted':
                 ?>
                     <div class="upload-page-hash">
-                        <h3>The message hidden in the file: <?php echo $arg; ?></h3>
+                        <h3>
+                            The message hidden in the file:
+                            <i>
+                                <span class="bold-text">
+                                    "<?= $arg; ?>"
+                                </span>
+                            </i>
+                        </h3>
                     </div>
                     <div class="upload-page-buttons">
                         <form action="index.php" method='GET'>

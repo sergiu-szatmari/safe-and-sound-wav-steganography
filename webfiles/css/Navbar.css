@@ -4,6 +4,7 @@
 }
 
 nav {
+    user-select: none;
     background: #72966f;
     color: white;
     max-height: 100px;
@@ -12,10 +13,12 @@ nav {
 img {
     height: 100px;
     object-fit: contain;
+    user-select: none;
 }
 
 li {
     color: white;
+    user-select: none;
 }
 
 .active-page-nav a span {
